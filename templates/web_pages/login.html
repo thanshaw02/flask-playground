@@ -1,0 +1,16 @@
+{% extends 'web_layouts/main_layout.html' %}
+{% block title %} Login {% endblock %}
+{% block header %} Login {% endblock %}
+{% block content %}
+  <form action="/login/verify" method="POST" align="center" class="input-form">
+    <fieldset>
+      Username: <input type="test" name="uname" required><br><br>
+      Password: <input type="password" name="pass" required><br><br>
+      <input type="submit" value="Login" class="btn btn-outline-dark btn-md">
+      {% if login_fail %}
+        <br><br><p style="color: black;">Please enter a valid username and/or password.</p>
+      {% endif %}
+    </fieldset>
+  </form>
+{% endblock %}
+{% block menu %}{% endblock %}

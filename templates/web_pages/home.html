@@ -1,0 +1,20 @@
+{% extends 'web_layouts/main_layout.html' %}
+{% block title %} Secret Page {% endblock %}
+{% block header %} Welcome {{args[0]}} to this secret page! {% endblock %}
+{% block menu %}
+  {% for key, value in args[2].items() %}
+    {% if args[1] == 'USER' and key != 'Edit User' %}
+      <a href="{{ url_for(value) }}" class="btn btn-outline-dark btn-sm">{{ key }}</a>
+    {% elif args[1] == 'ADMIN' %}
+      <a href="{{ url_for(value) }}" class="btn btn-outline-dark btn-sm">{{ key }}</a>
+    {% elif args[1] == 'GUEST' and key == 'Log Out' %}
+      <a href="{{ url_for(value) }}" class="btn btn-outline-dark btn-sm">{{ key }}</a>
+    {% endif %}
+  {% endfor %}
+{% endblock %}
+{% block role %}
+  <span class="badge badge-pill badge-dark" data-toggle="tooltip" title="Your user role">{{ args[1] }}</span>
+{% endblock %}
+{% block content %}
+  <img src="{{ url_for('static', filename='top_secret.gif') }}" width="275" height="150">
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'web_layouts/main_layout.html' %}
+{% block title %} Add User {% endblock %}
+{% block header %} Add User {% endblock %}
+{% block menu %}
+  {% for key, value in args[1].items() %}
+    {% if args[0] != 'ADMIN' and key != 'Edit User' %}
+      <a href="{{ url_for(value) }}" class="btn btn-outline-dark btn-sm">{{ key }}</a>
+    {% elif args[0] == 'ADMIN' %}
+      <a href="{{ url_for(value) }}" class="btn btn-outline-dark btn-sm">{{ key }}</a>
+    {% endif %}
+  {% endfor %}
+{% endblock %}
+{% block role %}
+  <span class="badge badge-pill badge-dark" data-toggle="tooltip" title="Your user role">{{ args[0] }}</span>
+{% endblock %}
+{% block flash %}
+  {% for message in get_flashed_messages() %}
+    <div class="alert alert-info alert-dismissible fade show" style="width: 400px;" role="alert">
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  {% endfor %}
+{% endblock %}
+{% block content %}
+  <form action="/addUser/adding" method=POST class="input-form">
+    <fieldset>
+      {% if args[0] == 'ADMIN' %}
+        <!-- I want to move this down just above the submit button, but for now until I figure out the role thing it'll stay here -->
+        <div class="btn-group">
+          <button class="btn btn-dark btn-md dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Choose a Role
+          </button>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" name="guest" href="/addUser/guest">Guest</a>
+            <a class="dropdown-item" name="user" href="/addUser/user">User</a>
+            <a class="dropdown-item" name="admin" href="/addUser/admin">Admin</a>
+          </div>
+        </div><br><br>
+      {% endif %}
+      <div class="input-group mb-3 ml-5" style="width: 300px;">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputGroup-sizing-default">*First Name</span>
+        </div>
+        <input required type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" name="first_name">
+      </div>
+      <div class="input-group mb-3 ml-5" style="width: 300px;">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputGroup-sizing-default">*Last Name</span>
+        </div>
+        <input required type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" name="last_name">
+      </div>
+      <div class="input-group mb-3 ml-5" style="width: 300px;">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputGroup-sizing-default">*Username</span>
+        </div>
+        <input required type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" name="username">
+      </div>
+      <div class="input-group mb-3 ml-5" style="width: 300px;">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputGroup-sizing-default">*Password</span>
+        </div>
+        <input required type="password" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" name="password">
+      </div>
+      <div class="input-group mb-3 ml-5" style="width: 300px;">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputGroup-sizing-default">*Re-type Password</span>
+        </div>
+        <input required type="password" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" name="verify_password">
+      </div>
+      <input type=submit name="addUser" value="Add New User" class="btn btn-outline-dark btn-md">
+    </fieldset>
+  </form>
+{% endblock %}

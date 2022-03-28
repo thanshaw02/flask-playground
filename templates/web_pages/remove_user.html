@@ -1,0 +1,55 @@
+{% extends 'web_layouts/main_layout.html' %}
+{% block title %} Remove User {% endblock %}
+{% block header %} Remove User {% endblock %}
+{% block menu %}
+  {% for key, value in args[1].items() %}
+    {% if args[0] != 'ADMIN' and key != 'Edit User' %}
+      <a href="{{ url_for(value) }}" class="btn btn-outline-dark btn-sm">{{ key }}</a>
+    {% elif args[0] == 'ADMIN' %}
+      <a href="{{ url_for(value) }}" class="btn btn-outline-dark btn-sm">{{ key }}</a>
+    {% endif %}
+  {% endfor %}
+{% endblock %}
+{% block role %}
+  <span class="badge badge-pill badge-dark" data-toggle="tooltip" title="Your user role">{{ args[0] }}</span>
+{% endblock %}
+{% block flash %}
+  {% for message in get_flashed_messages() %}
+    <div class="alert alert-info alert-dismissible fade show" style="width: 500px;" role="alert">
+      {{ message }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  {% endfor %}
+{% endblock %}
+{% block content %}
+  <form action="/removeUser/removing" method=POST class="input-form">
+    <fieldset>
+      {% if args[0] == 'ADMIN' %}
+        <!-- I want to move this down just above the submit button, but for now until I figure out the role thing it'll stay here -->
+        <div class="btn-group">
+          <button class="btn btn-dark btn-md dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Choose a Role
+          </button>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" name="guest" href="/removeUser/guest">Guest</a>
+            <a class="dropdown-item" name="user" href="/removeUser/user">User</a>
+            <a class="dropdown-item" name="admin" href="/removeUser/admin">Admin</a>
+          </div>
+        </div><br><br>
+      {% endif %}
+      <div class="input-group mb-3 ml-5" style="width: 300px;">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputGroup-sizing-default">*Username</span>
+        </div>
+        <input required type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" name="username">
+      </div>
+      Check to verify: <input type=checkbox name="check_box"><br><br>
+      <input type=submit name="remove_single" value="Remove Current User" class="btn btn-outline-dark btn-md">
+      {% if args[0] == 'ADMIN' %}
+        <input type=submit name="remove_all" value="Remove All Users ('GUEST')" class="btn btn-outline-dark btn-md">
+      {% endif %}
+    </fieldset>
+  </form>
+{% endblock %}
