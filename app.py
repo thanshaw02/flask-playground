@@ -5,11 +5,6 @@
 #   - 'ADMIN': Can view all pages, they can also remove any user (including another Admin)
 #     - Admin's can also create other admins along with guests and users
 #
-# BUGS:
-#   - Running into an infinite redirect loop when a 'GUEST' logs in
-#     - I fixed the issue for now, I left a comment near where it was happening
-#     - But will need to take a closer look at it tomorrow to make sure it's all covered
-#
 #   - Maybe try to put all functions that aren't relying on routes into another file to clean things up a bit??
 #   - Look into how to include other Python files
 #
@@ -26,14 +21,17 @@ app.config.update(
 )
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes = 60) # This sets the timeout to 3 minutes
 sess = Session()
-print(app.config)
 
 # Importing a file that holds all of my functions that don't require routing
 import utility_scripts as us
 
 # Using this global variable to hold onto the role chosen when adding a new user
-# This is a temporaru solution to the Bootstrap drop-down menu issue I'm having
+# This is a temporary solution to the Bootstrap drop-down menu issue I'm having
 add_role = ""
+
+# Using this global variable to hold onto the user that will be edited
+# This is a temporary solution to the Bootstrap drop-down menu issue I'm having
+edit_user = ""
 
 # Menu items for each page #
 home_menu = { "Log Out" : "logout", "Add User" : "renderAddUser", "Remove User" : "renderRemoveUser", "Edit User" : "renderEditUser" }
@@ -205,20 +203,63 @@ def setRoleForRemoveUser(role):
 @app.route('/editUser', methods = ['GET', 'POST'])
 def renderEditUser():
   if 'logged_in' in session and session['role'] == 'ADMIN':
+    # if edit_user != "": print(edit_user)
+    # if add_role != "": print(add_role)
     session['last_page_visited'] = 'renderEditUser'
     users = us.getAllUserNames()
-    print(users)
-    print(type(users))
     return us.checkValidUser('web_pages/edit_user.html', (session['role'], edit_user_menu, users))
   else:
     if 'logged_in' in session:
-      print(session['role'])
       return redirect(url_for(session['last_page_visited']))
     else:
       resp = make_response("Cookies")
       resp.set_cookie("visited_page", "renderEditUser") # Probably not secure opening my back end functions up to the public like this
       return redirect(url_for('renderLogIn'))
 
+@app.route('/editUser/editing', methods = ['GET', 'POST'])
+def editingUser():
+  if request.method == 'POST' and 'logged_in' in session and session['role'] == 'ADMIN':
+    global add_role, edit_user
+    if not add_role and not edit_user:
+      flash("Please choose a user to edit and a role for that user.")
+      return redirect(url_for('renderEditUser'))
+    else:
+      password = request.form['password']
+      verify_password = request.form['verify_password']
+      if password != verify_password:
+        flash('Please enter the same password twice.')
+        return redirect(url_for('renderEditUser'))
+      if us.editUser(edit_user, add_role, request.form['first_name'], request.form['last_name'], 
+                    request.form['username'], request.form['password']):
+        flash("The user '" + edit_user + "' has been updated successfully!")
+        edit_user = ""
+        add_role = ""
+        return redirect(url_for('renderEditUser'))
+      else:
+        flash("The user '" + edit_user + "' was not updates successfully...")
+        return redirect(url_for('renderEditUser'))
+        
+# I want to turn this into a more vague method, so the add and remove pages can call this to!
+@app.route('/editUser/chooseUser/<username>/<page>', methods = ['GET', 'POST'])
+def setUserToEdit(username, page):
+  if 'logged_in' in session and session['role'] == 'ADMIN':
+    global edit_user
+    edit_user = username
+    return redirect(url_for(page))
+  else:
+    if 'logged_in' in session: return redirect(url_for(session['last_page_visited']))
+    else: return redirect(url_for('renderLogIn'))
+
+# I want to turn this into a more vague method, so the add and remove pages can call this to!
+@app.route('/editUser/chooseRole/<role>/<page>', methods = ['GET', 'POST'])
+def chooseRole(role, page):
+  if 'logged_in' in session and session['role'] == 'ADMIN':
+    global add_role
+    add_role = role
+    return redirect(url_for(page))
+  else:
+    if 'logged_in' in session: return redirect(url_for(session['last_page_visited']))
+    else: return redirect(url_for('renderLogIn'))
 
 
 if(__name__ == '__main__'):

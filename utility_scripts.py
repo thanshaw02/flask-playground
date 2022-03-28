@@ -94,3 +94,9 @@ def getAllUserNames():
   cursor = get_db().cursor()
   cursor.execute('SELECT username FROM users WHERE role = \'USER\' OR role = \'GUEST\'')
   return cursor.fetchall()
+
+def editUser(userToEdit, new_role, new_fname, new_lname, new_uname, new_password):
+  cursor = get_db().cursor()
+  query_string = "UPDATE users SET first_name = %s, last_name = %s, username = %s, password = %s, role = %s WHERE username = %s"
+  cursor.execute(query_string, (new_fname, new_lname, new_uname, sha256_crypt.hash(new_password), new_role, userToEdit))
+  return cursor.rowcount == 1

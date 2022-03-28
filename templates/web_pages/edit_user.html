@@ -20,14 +20,59 @@
   {% endfor %}
 {% endblock %}
 {% block content %}
-  <div class="btn-group">
-    <button class="btn btn-dark btn-md dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      Choose a User
-    </button>
-    <div class="dropdown-menu">
-      {% for user in args[2] %}
-          <a class="dropdown-item" href="/editUser/{{ user['username'] }}">{{ user['username'] }}</a>
-      {% endfor %}
-    </div>
-  </div><br><br>
+  <form action="/editUser/editing" method="POST" class="input-form">
+    <fieldset>
+      <div class="btn-group">
+        <button class="btn btn-dark btn-md dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Choose a User
+        </button>
+        <div class="dropdown-menu">
+          {% for user in args[2] %}
+              <a class="dropdown-item" href="/editUser/chooseUser/{{ user['username'] }}/renderEditUser">{{ user['username'] }}</a>
+          {% endfor %}
+        </div>
+      </div><br><br>
+      <div class="btn-group">
+        <button class="btn btn-dark btn-md dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Choose a Role
+        </button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" name="guest" href="/editUser/chooseRole/GUEST/renderEditUser">Guest</a>
+          <a class="dropdown-item" name="user" href="/editUser/chooseRole/USER/renderEditUser">User</a>
+          <a class="dropdown-item" name="admin" href="/editUser/chooseRole/ADMIN/renderEditUser">Admin</a>
+        </div>
+      </div><br><br>
+      <div class="input-group mb-3 ml-5" style="width: 300px;">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputGroup-sizing-default">*First Name</span>
+        </div>
+        <input required type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" name="first_name">
+      </div>
+      <div class="input-group mb-3 ml-5" style="width: 300px;">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputGroup-sizing-default">*Last Name</span>
+        </div>
+        <input required type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" name="last_name">
+      </div>
+      <div class="input-group mb-3 ml-5" style="width: 300px;">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputGroup-sizing-default">*Username</span>
+        </div>
+        <input required type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" name="username">
+      </div>
+      <div class="input-group mb-3 ml-5" style="width: 300px;">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputGroup-sizing-default">*Password</span>
+        </div>
+        <input required type="password" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" name="password">
+      </div>
+      <div class="input-group mb-3 ml-5" style="width: 300px;">
+        <div class="input-group-prepend">
+          <span class="input-group-text" id="inputGroup-sizing-default">*Re-type Password</span>
+        </div>
+        <input required type="password" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default" name="verify_password">
+      </div>
+      <input type=submit name="addUser" value="Add New User" class="btn btn-outline-dark btn-md">
+    </fieldset>
+  </form>
 {% endblock %}
