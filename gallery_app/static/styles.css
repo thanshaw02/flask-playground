@@ -1,0 +1,11 @@
+body {
+  background-color: darksalmon;
+}
+
+.input-form {
+  text-align: center;
+  width: 415px;
+  margin-top: 15px;
+  margin-left: auto;
+  margin-right: auto;
+}

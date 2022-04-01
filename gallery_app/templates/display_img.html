@@ -1,0 +1,10 @@
+{% extends 'main_layout.html' %}
+{% block title %} Media {% endblock %}
+{% block header %} Viewing Media {% endblock %}
+{% block content %}
+  <a href="/home" class="btn btn-outline-dark">Home</a>
+  <br><br>
+  <span class="badge bg-dark">{{ img_name }}</span>
+  <br><br>
+  <img src="{{ img }}" class="img-thumbnail mb-4" style="width: 700px;">
+{% endblock %}
