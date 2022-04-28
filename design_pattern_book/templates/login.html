@@ -1,0 +1,31 @@
+{% extends 'main_layout.html' %}
+{% block title %} Login {% endblock %}
+{% block header %} <snap class="display-4">Login</snap> {% endblock %}
+{% block flash %}
+  {% for message in get_flashed_messages() %}
+    <div class="alert alert-light alert-dismissible fade show" role="alert" style="width: 575px;">
+      <i>{{ message }}</i>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endfor %}
+{% endblock %}
+{% block content %}
+  <div class="card mb-4" style="width: 415px;">
+    <div class="card-body">
+      <form action="/attemptLogin" method="POST">
+        <div class="form-floating">
+          <input type="text" class="form-control" placeholder="Username" name="username" required>
+          <label for="pname">Username</label>
+        </div>
+        <div class="form-floating mt-2">
+          <input type="text" class="form-control" placeholder="Password" name="password" required>
+          <label for="pname">Password</label>
+        </div>
+        <br>
+        <input type="submit" class="btn btn-outline-dark" value="Login">
+      </form>
+    </div>
+  </div>
+  <span class="display-6">- OR -</span><br>
+  <a href="/home"><span class="btn btn-outline-dark mt-4">Login As Guest</span></a>
+{% endblock %}

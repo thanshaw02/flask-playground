@@ -1,0 +1,24 @@
+{% extends 'main_layout.html' %}
+{% block title %} Home {% endblock %}
+{% block header %} <snap class="display-4">Add a Pattern</snap> {% endblock %}
+{% block nav %}
+  <a href="/home"><span class="btn btn-outline-dark btn-sm">View Patterns</span></a>
+{% endblock %}
+{% block flash %}
+  {% for message in get_flashed_messages() %}
+    <div class="alert alert-light alert-dismissible fade show" role="alert" style="width: 575px;">
+      <i>{{ message }}</i>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endfor %}
+{% endblock %}
+{% block content %}
+  <form action="/addPattern" method="POST" class="input-form mb-4">
+    <div class="card">
+      <div class="card-body">
+        {% include 'pattern_temp.html' %}
+        <input type="submit" class="btn btn-outline-dark mt-4" value="Add Pattern">
+      </div>
+    </div>
+  </form>
+{% endblock %}

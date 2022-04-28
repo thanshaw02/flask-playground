@@ -1,0 +1,123 @@
+{% extends 'main_layout.html' %}
+{% block title %} Tylor's Pattern Book {% endblock %}
+{% block header %} <snap class="display-4">Tylor's Pattern Book</snap> {% endblock %}
+{% block nav %}
+  {% if logged_in_as == 'admin' %}
+    <form action="/addPatternForm" method="POST">
+      <input type="submit" class="btn btn-outline-dark btn-sm" value="Add Pattern">
+    </form>
+    <form action="/logout" method="POST">
+      <input type="submit" class="btn btn-outline-dark btn-sm mt-2" value="Logout">
+    </form>
+  {% else %}
+    <form action="/login">
+      <input type="submit" class="btn btn-outline-dark btn-sm" value="Login As Admin">
+    </form>
+  {% endif %}
+{% endblock %}
+{% block flash %}
+  {% for message in get_flashed_messages() %}
+    <div class="alert alert-light alert-dismissible fade show" role="alert" style="width: 575px;">
+      <i>{{ message }}</i>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  {% endfor %}
+{% endblock %}
+{% block content %}
+  <div class="card" style="width: 415px;">
+    {% if patterns|length == 0 %}
+      <div class="card-header display-6">
+        No Patterns to View
+      </div>
+    {% else %}
+      <div class="card-body">
+        <div class="card-title display-6 mb-4"><u>Viewing All Patterns</u></div>
+        {% set count = namespace(value = 1) %}
+        {% for pattern in patterns %}
+          <!-- Button trigger modal -->
+          {% if count.value % 2 == 0 or pattern['name']|length < 5 %}
+            <button type="button" class="btn btn-outline-dark mt-2 mr-2" data-bs-toggle="modal" data-bs-target="#exampleModal{{ pattern['id'] }}">
+              {{ pattern['name'] }}
+            </button>
+            <br>
+          {% else %}
+            <button type="button" class="btn btn-outline-dark mt-2 mr-2" data-bs-toggle="modal" data-bs-target="#exampleModal{{ pattern['id'] }}">
+              {{ pattern['name'] }}
+            </button>
+          {% endif %}
+
+          <!-- Modal -->
+          <div class="modal fade" id="exampleModal{{ pattern['id'] }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Pattern Number: {{ pattern['id'] }}</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <span class="display-6">Name</span><br><span id="pattern-name-{{ pattern['id'] }}">{{ pattern['name'] }}</span><br><br>
+                  <span class="display-6">Forces</span><br><span id="pattern-forces-{{ pattern['id'] }}">{{ pattern['forces'] }}</span><br><br>
+                  <span class="display-6">(Re)solution</span><br><span id="pattern-resolution-{{ pattern['id'] }}">{{ pattern['resolution'] }}</span><br><br>
+                  <span class="display-6">Code Examples</span><br>
+                  <div class="card bg-secondary text-dark bg-opacity-50" style="text-align: start; width: 500px;">
+                    <div class="card-body">
+                      <pre id="pattern-code-examples-{{ pattern['id'] }}">{{ pattern['code_examples'] }}</pre>
+                    </div>
+                  </div>
+                  <br>
+                  <span class="display-6">Preceding Patterns</span><br>
+                    <!-- This will link to another pattern in the pattern book database -->
+                    <!-- Or it will just print the name of the pattern with no linking -->
+                    {% if pattern['id'] in preceding %}
+                      <a id="pattern-preceding-patterns-{{ pattern['id'] }}" class="link-dark" data-bs-toggle="modal" data-bs-target="#exampleModal{{ preceding[pattern['id']] }}">{{ pattern['preceding_patterns'] }}<br><br></a>
+                    {% else %}
+                      <span id="pattern-preceding-patterns-{{ pattern['id'] }}">{{ pattern['preceding_patterns'] }}</span><br><br>
+                    {% endif %}
+                  <span class="display-6">Following Patterns</span><br>
+                    <!-- This will link to another pattern in the pattern book database -->
+                    <!-- Or it will just print the name of the pattern with no linking -->
+                    {% if pattern['id'] in following %}
+                      <a id="pattern-following-patterns-{{ pattern['id'] }}" class="link-dark" data-bs-toggle="modal" data-bs-target="#exampleModal{{ following[pattern['id']] }}">{{ pattern['following_patterns'] }} </a>
+                    {% else %}
+                      <span id="pattern-following-patterns-{{ pattern['id'] }}">{{ pattern['following_patterns'] }}</span>
+                    {% endif %}
+                </div>
+                {% if logged_in_as == 'admin' %}
+                  <form action="/removePattern" method="POST">
+                    <div class="modal-footer">
+                      <input hidden type="text" value="{{ pattern['id'] }}" name="pattern_id">
+                      <input type="submit" class="btn btn-outline-danger" value="Remove Pattern">
+                      <button value="{{ pattern['id'] }}" onclick="setEditWindow(this.value)" type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#editPattern">Edit Pattern</button>
+                    </div>
+                  </form>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          {% set count.value = count.value + 1 %}
+        {% endfor %}
+        {% if logged_in_as == 'admin' %}
+          <div class="modal fade" id="editPattern" tabindex="-1" aria-labelledby="editPattern" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="editPatternName"></h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="/editPattern" method="POST">
+                  <div class="modal-body">
+                    <input type="hidden" value="" id="edit-pattern-id" name="edit_pattern_id">
+                    {% include 'pattern_temp.html' %}
+                  </div>
+                  <div class="modal-footer">
+                    <input type="submit" class="btn btn-outline-dark" value="Submit Edits">
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
