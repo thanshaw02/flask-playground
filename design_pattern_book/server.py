@@ -18,6 +18,9 @@ def close_db(error):
   if hasattr(g, 'db'):
     g.db.close()
 
+# This function checks to see if any pattern in the DB has a previous and/or following pattern that matches the name of another pattern
+# This will turn each preceding and following pattern into a link dynamically
+# No need to physically add links in the Flask template, just spell the pattern names correctly and a link will be made
 def checkForConnectingPatterns(patterns, prec_or_foll):
   connectingPatterns = {}
   for i in range(len(patterns)):
